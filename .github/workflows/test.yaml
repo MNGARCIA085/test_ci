@@ -26,13 +26,11 @@ jobs:
         sudo apt-get install python3-dev libpq-dev
         pip install -r requirements.txt
 
-    #- name: Create database
-    #  run: psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -c "CREATE DATABASE ${{ secrets.DB_NAME }};"
     - name: Create PostgreSQL user and database
-    run: |
-      export PGPASSWORD="${{ secrets.DB_PASSWORD }}"
-      psql -h localhost -U postgres -c "CREATE USER ${{ secrets.DB_USER }} WITH PASSWORD '${{ secrets.DB_PASSWORD }}';"
-      psql -h localhost -U postgres -c "CREATE DATABASE ${{ secrets.DB_NAME }} OWNER ${{ secrets.DB_USER }};"
+      run: |
+        export PGPASSWORD="${{ secrets.DB_PASSWORD }}"
+        psql -h localhost -U postgres -c "CREATE USER ${{ secrets.DB_USER }} WITH PASSWORD '${{ secrets.DB_PASSWORD }}';"
+        psql -h localhost -U postgres -c "CREATE DATABASE ${{ secrets.DB_NAME }} OWNER ${{ secrets.DB_USER }};"
 
 
     - name: Apply migrations
