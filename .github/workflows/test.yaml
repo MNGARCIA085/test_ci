@@ -28,8 +28,9 @@ jobs:
 
     - name: Create PostgreSQL user and database
       run: |
-        CREATE USER project WITH password '1234';
-        CREATE DATABASE test_project WITH OWNER project;
+        export PGPASSWORD="${{ secrets.DB_PASSWORD }}"
+        psql -h localhost -U postgres -c "CREATE USER ${{ secrets.DB_USER }} WITH PASSWORD '${{ secrets.DB_PASSWORD }}';"
+        psql -h localhost -U postgres -c "CREATE DATABASE ${{ secrets.DB_NAME }} OWNER ${{ secrets.DB_USER }};"
 
 
     - name: Apply migrations
