@@ -26,13 +26,10 @@ jobs:
         sudo apt-get install python3-dev libpq-dev
         pip install -r requirements.txt
 
-    - name: Get PostgreSQL IP
-      run: echo "::set-env name=PGHOST::$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' postgres)"
-
     - name: Create PostgreSQL user and database
       run: |
         export PGPASSWORD="${{ secrets.DB_PASSWORD }}"
-        psql -h ${{ env.PGHOST }} -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${{ secrets.DB_NAME }} OWNER ${{ secrets.DB_USER }};"
+        psql -h localhost -U ${{ secrets.DB_USER }} -c "CREATE DATABASE ${{ secrets.DB_NAME }} OWNER ${{ secrets.DB_USER }};"
 
     - name: Apply migrations
       run: python manage.py migrate
