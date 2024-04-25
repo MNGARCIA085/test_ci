@@ -28,7 +28,6 @@ jobs:
 
     - name: Create PostgreSQL user and database
       run: |
-        export PGPASSWORD="${{ secrets.DB_PASSWORD }}"
         psql -h localhost -U postgres -c "CREATE USER ${{ secrets.DB_USER }} WITH PASSWORD '${{ secrets.DB_PASSWORD }}';"
         psql -h localhost -U postgres -c "CREATE DATABASE ${{ secrets.DB_NAME }} OWNER ${{ secrets.DB_USER }};"
 
