@@ -10,9 +10,9 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: project
+          POSTGRES_PASSWORD: 1234
+          POSTGRES_DB: 1234
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -23,9 +23,9 @@ jobs:
 
     - name: Configure database credentials
       env:
-        POSTGRES_USER: ${{ secrets.DB_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        POSTGRES_DB: ${{ secrets.DB_NAME }}
+        POSTGRES_USER: project
+        POSTGRES_PASSWORD: 1234
+        POSTGRES_DB: 1234
       run: |
         echo "export POSTGRES_USER=$POSTGRES_USER" >> $GITHUB_ENV
         echo "export POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> $GITHUB_ENV
