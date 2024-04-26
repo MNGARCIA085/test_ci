@@ -43,8 +43,8 @@ jobs:
 
       # queries database with postgres client
       - name: Query database
-        run: psql -h postgres -d postgres_db -U postgres_user -c 'SELECT 1;'
+        run: psql -h ${{ job.services.postgres.env.POSTGRES_HOST }} -d ${{ job.services.postgres.env.POSTGRES_DB }} -U ${{ job.services.postgres.env.POSTGRES_USER }} -c 'SELECT 1;'
         env:
           # postgress password is required; alternatively, you can run:
           # `PGPASSWORD=postgres_password psql ...`
-          PGPASSWORD: postgres_password
+          PGPASSWORD: 1234
