@@ -48,3 +48,14 @@ jobs:
           # postgress password is required; alternatively, you can run:
           # `PGPASSWORD=postgres_password psql ...`
           PGPASSWORD: 1234
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install python3-dev libpq-dev
+          pip install -r requirements.txt
+
+      - name: Apply migrations
+        run: python manage.py migrate
+
+      - name: Run Django tests
+        run: python manage.py test
