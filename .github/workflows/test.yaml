@@ -49,9 +49,9 @@ jobs:
 
       # Install dependencies
       - name: Install dependencies
-      run: |
-        sudo apt-get install python3-dev libpq-dev
-        pip install -r requirements.txt
+        run: |
+          sudo apt-get install python3-dev libpq-dev
+          pip install -r requirements.txt
 
       # Run Django tests
       - name: Run Django tests
