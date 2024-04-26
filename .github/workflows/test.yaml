@@ -1,12 +1,10 @@
-# .github/workflows/postgres.yml
-on: push
+name: Django Tests
+
+on: [push, pull_request]
+
 jobs:
-  # label of the container job
-  tests:
-    # containers must run in Linux based operating systems
+  test:
     runs-on: ubuntu-latest
-    # Docker Hub image that `postgres-job` executes in
-    container: python:latest
 
     # service containers to run with `postgres-job`
     services:
@@ -36,32 +34,25 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Install PostgreSQL client
-        run: |
-          apt-get update
-          apt-get install --yes postgresql-client
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      # Install Python and pip
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'  # Choose the Python version you need
 
-      # Install dependencies
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
 
-      # Run Django tests
-      - name: Run Django tests
-        run: |
-          # Assuming your tests are in a directory named 'tests'
-          python manage.py test tests
-        env:
-          # Add any environment variables required for testing
-          DJANGO_SETTINGS_MODULE: your_project.settings
-          # Optionally, add database credentials for testing if different from production
-          POSTGRES_DB: postgres_db
-          POSTGRES_PASSWORD: postgres_password
-          POSTGRES_USER: postgres_user
-          POSTGRES_HOST: postgres
+    - name: Install dependencies
+      run: |
+        sudo apt-get install python3-dev libpq-dev
+        pip install -r requirements.txt
+
+    - name: Create PostgreSQL user and database
+      run: |
+        psql -h localhost -U postgres_user -c "CREATE DATABASE postgres_db OWNER postgres_user;"
+
+    - name: Apply migrations
+      run: python manage.py migrate
+
+    - name: Run Django tests
+      run: python manage.py test
+
+    # Add a step to generate test coverage report (example using coverage.py)
+    # ...
