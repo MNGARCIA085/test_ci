@@ -1,61 +1,68 @@
 # .github/workflows/postgres.yml
 on: push
+
+
+
 jobs:
-  # label of the container job
-  postgres-job:
-    # containers must run in Linux based operating systems
+
+  test:
     runs-on: ubuntu-latest
-    # Docker Hub image that `postgres-job` executes in
-    container: node:latest
 
-    # service containers to run with `postgres-job`
-    services:
-      # label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres:latest
-        # service environment variables
-        # `POSTGRES_HOST` is `postgres`
-        env:
-          # optional (defaults to `postgres`)
-          POSTGRES_DB: test_project
-          # required
-          POSTGRES_PASSWORD: 1234
-          # optional (defaults to `5432`)
-          POSTGRES_PORT: 5432
-          # optional (defaults to `postgres`)
-          POSTGRES_USER: project
-        ports:
-          # maps tcp port 5432 on service container to the host
-          - 5432:5432
-        # set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    # label of the container job
+    postgres-job:
+      # containers must run in Linux based operating systems
+      runs-on: ubuntu-latest
+      # Docker Hub image that `postgres-job` executes in
+      container: node:latest
 
-    steps:
-      - name: Install PostgreSQL client
-        run: |
-          apt-get update
-          apt-get install --yes postgresql-client
+      # service containers to run with `postgres-job`
+      services:
+        # label used to access the service container
+        postgres:
+          # Docker Hub image
+          image: postgres:latest
+          # service environment variables
+          # `POSTGRES_HOST` is `postgres`
+          env:
+            # optional (defaults to `postgres`)
+            POSTGRES_DB: test_project
+            # required
+            POSTGRES_PASSWORD: 1234
+            # optional (defaults to `5432`)
+            POSTGRES_PORT: 5432
+            # optional (defaults to `postgres`)
+            POSTGRES_USER: project
+          ports:
+            # maps tcp port 5432 on service container to the host
+            - 5432:5432
+          # set health checks to wait until postgres has started
+          options: >-
+            --health-cmd pg_isready
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
 
-      # queries database with postgres client
-      - name: Query database
-        run: psql -h postgres -d test_project -U project -c 'SELECT 1;'
-        env:
-          # postgress password is required; alternatively, you can run:
-          # `PGPASSWORD=postgres_password psql ...`
-          PGPASSWORD: 1234
+      steps:
+        - name: Install PostgreSQL client
+          run: |
+            apt-get update
+            apt-get install --yes postgresql-client
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get install python3-dev libpq-dev
-          pip install -r requirements.txt
+        # queries database with postgres client
+        - name: Query database
+          run: psql -h postgres -d test_project -U project -c 'SELECT 1;'
+          env:
+            # postgress password is required; alternatively, you can run:
+            # `PGPASSWORD=postgres_password psql ...`
+            PGPASSWORD: 1234
 
-      - name: Apply migrations
-        run: python manage.py migrate
+        - name: Install dependencies
+          run: |
+            sudo apt-get install python3-dev libpq-dev
+            pip install -r requirements.txt
 
-      - name: Run Django tests
-        run: python manage.py test
+        - name: Apply migrations
+          run: python manage.py migrate
+
+        - name: Run Django tests
+          run: python manage.py test
