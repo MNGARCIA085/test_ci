@@ -1,0 +1,50 @@
+name: Django Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: project
+          POSTGRES_PASSWORD: 1234
+          POSTGRES_DB: 1234
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure database credentials
+      env:
+        POSTGRES_USER: project
+        POSTGRES_PASSWORD: 1234
+        POSTGRES_DB: 1234
+      run: |
+        echo "export POSTGRES_USER=$POSTGRES_USER" >> $GITHUB_ENV
+        echo "export POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> $GITHUB_ENV
+        echo "export POSTGRES_DB=$POSTGRES_DB" >> $GITHUB_ENV
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install python3-dev libpq-dev
+        pip install -r requirements.txt
+
+    - name: Create PostgreSQL user and database
+      run: |
+        psql -h localhost -U $POSTGRES_USER -c "CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;"
+
+    - name: Apply migrations
+      run: python manage.py migrate
+
+    - name: Run Django tests
+      run: python manage.py test
+
+    # Add a step to generate test coverage report (example using coverage.py)
+    # ...
