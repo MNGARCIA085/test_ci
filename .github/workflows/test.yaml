@@ -42,27 +42,27 @@ jobs:
             --health-timeout 5s
             --health-retries 5
 
-      steps:
-        - name: Install PostgreSQL client
-          run: |
-            apt-get update
-            apt-get install --yes postgresql-client
+    steps:
+      - name: Install PostgreSQL client
+        run: |
+          apt-get update
+          apt-get install --yes postgresql-client
 
-        # queries database with postgres client
-        - name: Query database
-          run: psql -h postgres -d test_project -U project -c 'SELECT 1;'
-          env:
-            # postgress password is required; alternatively, you can run:
-            # `PGPASSWORD=postgres_password psql ...`
-            PGPASSWORD: 1234
+      # queries database with postgres client
+      - name: Query database
+        run: psql -h postgres -d test_project -U project -c 'SELECT 1;'
+        env:
+          # postgress password is required; alternatively, you can run:
+          # `PGPASSWORD=postgres_password psql ...`
+          PGPASSWORD: 1234
 
-        - name: Install dependencies
-          run: |
-            sudo apt-get install python3-dev libpq-dev
-            pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          sudo apt-get install python3-dev libpq-dev
+          pip install -r requirements.txt
 
-        - name: Apply migrations
-          run: python manage.py migrate
+      - name: Apply migrations
+        run: python manage.py migrate
 
-        - name: Run Django tests
-          run: python manage.py test
+      - name: Run Django tests
+        run: python manage.py test
